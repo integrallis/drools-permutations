@@ -1,16 +1,8 @@
 package org.integrallis.drools;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.ResourceFactory;
-import org.drools.logger.KnowledgeRuntimeLogger;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 
 /**
  * This is a sample class to launch a rule.
@@ -18,36 +10,22 @@ import org.drools.runtime.StatefulKnowledgeSession;
 public class Permutations {
 
 	public static final void main(String[] args) {
+		KieSession knowledgeSession = null;
 		try {
 			// load up the knowledge base
-			KnowledgeBase knowledgeBase = readKnowledgeBase();
-			StatefulKnowledgeSession knowledgeSession = knowledgeBase.newStatefulKnowledgeSession();
-			KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(knowledgeSession, "test");
+			KieServices ks = KieServices.Factory.get();
+	        KieContainer kContainer = ks.getKieClasspathContainer();
+	        knowledgeSession = kContainer.newKieSession("ksession-rules");
 			// go !
 			knowledgeSession.insert(new Person("Bob"));
 			knowledgeSession.insert(new Person("Alice"));
-			knowledgeSession.insert(new Person("Steve"));
+			//knowledgeSession.insert(new Person("Steve"));
 			
 			knowledgeSession.fireAllRules();
-			logger.close();
 		} catch (Throwable t) {
 			t.printStackTrace();
+		} finally {
+			knowledgeSession.dispose();
 		}
 	}
-
-	private static KnowledgeBase readKnowledgeBase() throws Exception {
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newClassPathResource("permutations.drl"), ResourceType.DRL);
-		KnowledgeBuilderErrors errors = kbuilder.getErrors();
-		if (errors.size() > 0) {
-			for (KnowledgeBuilderError error: errors) {
-				System.err.println(error);
-			}
-			throw new IllegalArgumentException("Could not parse knowledge.");
-		}
-		KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-		kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-		return kbase;
-	}
-
 }

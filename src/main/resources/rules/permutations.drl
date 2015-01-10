@@ -1,0 +1,9 @@
+package org.integrallis.drools
+ 
+rule "Matches"
+	when
+		person1 : Person()
+		person2 : Person()
+	then
+		System.out.println( "{" + person1 + ", " + person2 + "}" ); 
+end
