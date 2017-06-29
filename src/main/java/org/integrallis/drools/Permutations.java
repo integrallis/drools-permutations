@@ -20,6 +20,7 @@ public class Permutations {
 			knowledgeSession.insert(new Person("Bob"));
 			knowledgeSession.insert(new Person("Alice"));
 			knowledgeSession.insert(new Person("Steve"));
+			knowledgeSession.insert(new Person("Chuck Norris"));
 			
 			knowledgeSession.fireAllRules();
 		} catch (Throwable t) {

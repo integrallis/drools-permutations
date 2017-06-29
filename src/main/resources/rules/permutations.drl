@@ -3,8 +3,8 @@ package org.integrallis.drools
 rule "Matches"
 	when
 		person1 : Person()
-		person2 : Person(this < person1)
-		person3 : Person(this < person2)
+		person2 : Person()
+		//person3 : Person()
 	then
-		System.out.println( "{" + person1 + ", " + person2 + ", " + person3 + "}" ); 
+		System.out.println( "{" + person1 + ", " + person2 + "}" ); 
 end
